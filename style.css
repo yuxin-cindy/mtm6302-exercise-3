@@ -1,0 +1,24 @@
+div#form{
+
+    margin: 30px;
+    border-style: groove;
+    border-color: saddlebrown;
+       border-radius: 5px;
+}
+h1{
+    text-align: center;
+    /* background-color: rgb(212, 208, 203); */
+    margin: 0;
+    border-bottom-style: groove;
+    border-radius:2px;
+    border-color: saddlebrown;
+}
+.formPart{
+    margin: 20px 40px;
+}
+input{
+    width: 99%;
+}
+select{
+    width: 100%;
+}
