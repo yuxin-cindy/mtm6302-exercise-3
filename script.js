@@ -1,4 +1,3 @@
-
 // Targeting elements
 $form = document.getElementById('form')
 $result = document.getElementById('result')
