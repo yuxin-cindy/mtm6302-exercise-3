@@ -1,10 +1,19 @@
+
+// Targeting elements
 $form = document.getElementById('form')
+$result = document.getElementById('result')
+var interval
+function myFunction() {
+  clearInterval(interval)
+// hide result; show form
+$result.style.display = "none"
+$form.style.display = "block"
 
 $form.innerHTML =`
   <h1>Set countdown date <br>Must be a future date.</h1>
   <div class="formPart">
   <h2>Title</h2>
-      <input type="text" name="title" placeholder="Title">
+      <input id="title" type="text"  name='recipient' placeholder="Title">
   <h2>Year</h2>
       <select id="year"></select>
   <h2>Month</h2>
@@ -28,7 +37,6 @@ $form.innerHTML =`
   </div>
 `
 // Targeting elements
-
 let $day = document.getElementById('day')
 const $month = document.getElementById('month')
 const $year = document.getElementById('year')
@@ -36,7 +44,6 @@ const $countdown = document.getElementById('countdown')
 const DateTime = luxon.DateTime
 const now = DateTime.local()
 
-// const daysInMonth = [31,28,31,30]
 const yearsInFuture = 20
 let years = []
     for (let i = now.year; i <= now.year + yearsInFuture; i++){
@@ -51,31 +58,70 @@ function setDays(){
       year:$year.value,
       month:$month.value
     })
+    console.log($form[0])
    console.log(date.month)
    console.log($year.value)
    console.log($month.value)
-   
     let days = []
       for (let i = 1; i <= date.daysInMonth ; i++){
         days.push(`<option>${i}</option>`)
-        }
-        
-        $day.innerHTML = days.join('')  
-    
+        }       
+        $day.innerHTML = days.join('')    
   }
 
-  setDays()
-    
+  setDays()    
   $month.addEventListener('change',setDays)
 
+
   $form.addEventListener('submit',function(event){
-   
-    event.preventDefault()
-    const date = DateTime.fromObject({
-       year:$year.value,
+    let $title = document.getElementById('title').value
+    let date = DateTime.fromObject({
+      year:$year.value,
       month:$month.value,
       day:$day.value
     })
-     console.log(date)
+
+    
+    
+    $result.innerHTML  = $title +'<br>' +  `<p id="duration"></p>` + `<button id="changeCountdown"> Change Countdown</button>` 
+    console.log($result)
+    const $changeCountdown = document.getElementById('changeCountdown')      
+    // Update the count down every 1 second
+    interval = setInterval(function() {
+
+      // Get today's date and time
+      var now = new Date().getTime();
+
+      // Find the distance between now and the count down date
+      var distance = date.diffNow();
+
+      // Time calculations for days, hours, minutes and seconds
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Display the result in the element with id="duration"
+      document.getElementById("duration").innerHTML = days + "d " + hours + "h "
+      + minutes + "m " + seconds + "s ";
+
+      // If the count down is finished, write some text
+      if (distance < 0) {
+        clearInterval(interval);
+        document.getElementById("duration").innerHTML = "Date is in the past";
+      }
+      }, 1000);
+ 
+      event.preventDefault()
+      document.getElementById('changeCountdown').addEventListener('click',myFunction)
+      
+      // hide result; show form
+      $result.style.display = "block"
+      $form.style.display = "none"
   })
   
+
+}
+ 
+myFunction()
+ 

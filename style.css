@@ -1,9 +1,11 @@
-div#form{
+#form{
 
     margin: 30px;
     border-style: groove;
     border-color: saddlebrown;
-       border-radius: 5px;
+    border-radius: 5px;
+    text-align: center;
+    font-size:40px;
 }
 h1{
     text-align: center;
@@ -12,6 +14,11 @@ h1{
     border-bottom-style: groove;
     border-radius:2px;
     border-color: saddlebrown;
+    font-size:25px;
+}
+h2{
+    text-align: left;
+    font-size: 25px;
 }
 .formPart{
     margin: 20px 40px;
@@ -21,4 +28,21 @@ input{
 }
 select{
     width: 100%;
+}
+button{
+    background-color: rgb(219, 210, 207);
+    border-style: none;
+    font-size: 20px;
+    margin: 30px auto;
+    border-radius: 10px;
+    color: saddlebrown;;
+}
+#title{
+    color: tan;
+}
+#result{
+    text-align: center;
+    font-size: 40px;
+    color: rgb(51, 30, 16);;
+    margin-top: 150px;
 }
