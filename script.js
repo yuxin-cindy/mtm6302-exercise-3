@@ -1,12 +1,8 @@
+
 // Targeting elements
 $form = document.getElementById('form')
 $result = document.getElementById('result')
 var interval
-function myFunction() {
-  clearInterval(interval)
-// hide result; show form
-$result.style.display = "none"
-$form.style.display = "block"
 
 $form.innerHTML =`
   <h1>Set countdown date <br>Must be a future date.</h1>
@@ -35,13 +31,22 @@ $form.innerHTML =`
   <button id="countdown" type="submit">Get Countdown</button>
   </div>
 `
+let $title = document.getElementById('title')
+$result.innerHTML  = `<p id="titleValue"></p><br><p id="duration"></p><button id="changeCountdown"> Change Countdown</button>`
+
+let $titleValue = document.getElementById('titleValue')
 // Targeting elements
+
 let $day = document.getElementById('day')
 const $month = document.getElementById('month')
 const $year = document.getElementById('year')
 const $countdown = document.getElementById('countdown')
 const DateTime = luxon.DateTime
 const now = DateTime.local()
+//target date
+let date 
+// console.log($result)
+const $changeCountdown = document.getElementById('changeCountdown')    
 
 const yearsInFuture = 20
 let years = []
@@ -53,74 +58,93 @@ let years = []
 
 function setDays(){
 
-    let date = DateTime.fromObject({
+    let monthSelected = DateTime.fromObject({
       year:$year.value,
       month:$month.value
     })
     console.log($form[0])
-   console.log(date.month)
-   console.log($year.value)
-   console.log($month.value)
+    console.log(monthSelected.month)
+    console.log($year.value)
+    console.log($month.value)
     let days = []
-      for (let i = 1; i <= date.daysInMonth ; i++){
+      for (let i = 1; i <= monthSelected.daysInMonth ; i++){
         days.push(`<option>${i}</option>`)
         }       
-        $day.innerHTML = days.join('')    
+        $day.innerHTML = days.join('') 
+           
   }
 
-  setDays()    
-  $month.addEventListener('change',setDays)
+setDays()
 
+$month.addEventListener('change',setDays)
+$form.addEventListener('submit',function(event){
+  event.preventDefault()
 
-  $form.addEventListener('submit',function(event){
-    let $title = document.getElementById('title').value
-    let date = DateTime.fromObject({
-      year:$year.value,
-      month:$month.value,
-      day:$day.value
-    })
-
-    
-    
-    $result.innerHTML  = $title +'<br>' +  `<p id="duration"></p>` + `<button id="changeCountdown"> Change Countdown</button>` 
-    console.log($result)
-    const $changeCountdown = document.getElementById('changeCountdown')      
-    // Update the count down every 1 second
-    interval = setInterval(function() {
-
-      // Get today's date and time
-      var now = new Date().getTime();
-
-      // Find the distance between now and the count down date
-      var distance = date.diffNow();
-
-      // Time calculations for days, hours, minutes and seconds
-      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-      // Display the result in the element with id="duration"
-      document.getElementById("duration").innerHTML = days + "d " + hours + "h "
-      + minutes + "m " + seconds + "s ";
-
-      // If the count down is finished, write some text
-      if (distance < 0) {
-        clearInterval(interval);
-        document.getElementById("duration").innerHTML = "Date is in the past";
-      }
-      }, 1000);
- 
-      event.preventDefault()
-      document.getElementById('changeCountdown').addEventListener('click',myFunction)
-      
-      // hide result; show form
-      $result.style.display = "block"
-      $form.style.display = "none"
+  // use the values from the form to create Luxon DateTime object
+  date = DateTime.fromObject({
+    year:$year.value,
+    month:$month.value,
+    day:$day.value
   })
-  
 
+  // use toISo to turn DateTime object into string
+  localStorage.setItem('futureDay',date.toISO())
+  localStorage.setItem('titleLocal',$title.value)
+
+  showCountdown()
+})
+document.getElementById('changeCountdown').addEventListener('click',showForm)
+
+function showForm() {
+  // hide result; show form
+  $result.style.display = "none"
+  $form.style.display = "block"
 }
- 
-myFunction()
+
+function showCountdown(){
+  //get values from local storage
+  $titleValue.innerHTML = localStorage.getItem('titleLocal')
+  date = DateTime.fromISO(localStorage.getItem('futureDay'))
+
+  //reset timer
+  clearInterval(interval)
+
+  // Update the count down every 1 second
+  interval = setInterval(function() {
+
+    // Find the distance between now and the count down date
+    var distance = date.diffNow();
+
+    // Time calculations for days, hours, minutes and seconds
+    var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+    var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    // localStorage.setItem('futureDay',JSON.stringify({daysLocal:days,hoursLocal:hours,minutesLocal:minutes,secondLocal:seconds}))
+
+    // Display the result in the element with id="duration"
+    document.getElementById("duration").innerHTML = days + "d " + hours + "h "
+    + minutes + "m " + seconds + "s ";
+
+    // If the count down is finished, write some text
+    if (distance < 0) {
+      clearInterval(interval);
+      document.getElementById("duration").innerHTML = "Date is in the past";
+    }
+  }, 1000);
+
+    
+    
+    // hide result; show form
+    $result.style.display = "block"
+    $form.style.display = "none"
+}
+
+if (localStorage.getItem('futureDay')){
+  showCountdown()
+} else {
+  showForm()
+}
+
  
